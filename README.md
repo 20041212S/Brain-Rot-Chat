@@ -46,6 +46,46 @@ npm run dev
 
 Open the URL printed by Vite (usually http://localhost:5173).
 
+## Deploy to Vercel
+
+Deploy the frontend and backend as **two Vercel projects**. Vercel auto-detects the FastAPI `app` in `backend/app.py`, so no custom handler is needed.
+
+### Backend project
+
+1. In Vercel, choose **Add New → Project** and import this repo.
+2. Set **Root Directory** to `backend`.
+3. Keep the framework preset as **FastAPI** and leave build settings on default.
+4. Add these Environment Variables (Production and Preview):
+
+| Variable | Value |
+| --- | --- |
+| `LLM_BASE_URL` | e.g. `https://api.groq.com/openai/v1` |
+| `LLM_API_KEY` | your provider key |
+| `LLM_MODEL` | e.g. `openai/gpt-oss-120b` |
+| `LLM_MAX_TOKENS` | `800` |
+| `CORS_ORIGINS` | your frontend URL, e.g. `https://your-app.vercel.app` |
+
+Optional: `LLM_REASONING_EFFORT`.
+
+5. Deploy, then open `https://<backend-project>.vercel.app/health`. It should return `{"ok":true,...}`.
+
+`backend/data.txt` is a copy of the slang dataset so it gets bundled into the serverless function. `backend/vercel.json` sets the function timeout to 60 seconds.
+
+### Point the frontend at the backend
+
+In the **frontend** Vercel project, add:
+
+| Variable | Value |
+| --- | --- |
+| `VITE_API_URL` | `https://<backend-project>.vercel.app` |
+
+Vite reads `VITE_*` variables at build time, so **redeploy the frontend** after adding it.
+
+### CORS notes
+
+- `CORS_ORIGINS` is comma-separated: `https://your-app.vercel.app,http://localhost:5173`.
+- Preview deployments use a different URL each time. Add the preview origin to `CORS_ORIGINS`, or set `CORS_ORIGINS=*` since the API uses no cookies.
+
 ## Personality modes
 - **Adaptive**: medium-high brainrot; funny when casual, accurate and short when technical.
 - **Roast**: high brainrot with surgical roasts, then the actual answer.

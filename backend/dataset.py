@@ -28,13 +28,27 @@ class BrainrotDataset:
         self._init_db()
 
     def _init_db(self):
-        self.conn.execute("""
-            CREATE VIRTUAL TABLE IF NOT EXISTS conversations USING fts5(
-                id UNINDEXED,
-                query,
-                dialogue
-            )
-        """)
+        self.fts_enabled = True
+        try:
+            self.conn.execute("""
+                CREATE VIRTUAL TABLE IF NOT EXISTS conversations USING fts5(
+                    id UNINDEXED,
+                    query,
+                    dialogue
+                )
+            """)
+        except sqlite3.OperationalError as exc:
+            # Some serverless Python builds ship SQLite without FTS5.
+            # Fall back to a plain table and random example selection.
+            logger.warning(f"SQLite FTS5 unavailable ({exc}); using random example selection.")
+            self.fts_enabled = False
+            self.conn.execute("""
+                CREATE TABLE IF NOT EXISTS conversations(
+                    id INTEGER,
+                    query TEXT,
+                    dialogue TEXT
+                )
+            """)
         if not self.data_path or not self.data_path.is_file():
             logger.warning(f"data.txt not found at {self.data_path}, dataset will be empty.")
             return
@@ -86,7 +100,7 @@ class BrainrotDataset:
             return []
 
         cleaned = self.clean_query(user_query)
-        if cleaned:
+        if self.fts_enabled and cleaned:
             try:
                 cursor = self.conn.execute(
                     "SELECT DISTINCT dialogue FROM conversations WHERE conversations MATCH ? ORDER BY rank LIMIT ?",
