@@ -110,9 +110,9 @@ class BrainrotDataset:
             return ""
         formatted = "\n\n".join(f"Example {i+1}:\n{ex}" for i, ex in enumerate(examples))
         return (
-            "\nAUTHENTIC REFERENCE DIALOGUES (Incorporate this slang, natural humor, and cadence):\n"
+            "CADENCE REFERENCE (low-quality slang archive — borrow the short, chaotic rhythm only. "
+            "Do NOT copy the lines, repeat slang, or produce gibberish. Your answer must still be useful and coherent):\n"
             + formatted
-            + "\n"
         )
 
 # Global singleton

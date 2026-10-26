@@ -6,10 +6,10 @@ type ChatMessage = { role: "user" | "assistant"; content: string };
 const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
 const starters = [
-  { icon: "💀", title: "Destroy my code", prompt: "Roast this code brutally, don't hold back, then show me how to write it properly: " },
-  { icon: "⚡", title: "Unfiltered reality check", prompt: "Give me the brutal, unvarnished reality check on this idea: " },
-  { icon: "🧠", title: "Explain like I'm cooked", prompt: "Explain quantum computing like I have 2 braincells left and watch TikTok 14 hours a day." },
-  { icon: "🔥", title: "Roast my life choices", prompt: "I haven't touched grass in 3 days and I'm thinking of starting another unfinished side project. Roast me." },
+  { icon: "💀", title: "Destroy my code", prompt: "Roast this code brutally in full brainrot mode, don't hold back, then show me how to write it properly: " },
+  { icon: "⚡", title: "Unfiltered reality check", prompt: "Give me the brutal, unvarnished reality check on this idea, zero corporate filter: " },
+  { icon: "🧠", title: "Explain like I'm cooked", prompt: "Explain quantum computing like I have 2 braincells left, am chronically online, and need actual brainrot slang." },
+  { icon: "🔥", title: "Roast my life choices", prompt: "I haven't touched grass in 3 days and I'm starting another unfinished side project. Roast me in full brainrot." },
 ];
 
 export default function App() {

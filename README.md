@@ -47,8 +47,11 @@ npm run dev
 Open the URL printed by Vite (usually http://localhost:5173).
 
 ## Personality modes
-- **Adaptive**: matches the moment; jokes when appropriate and stays clear for serious tasks.
-- **Roast**: sharper sarcasm and playful roasting, without turning every response into meaningless slang.
+- **Adaptive**: medium-high brainrot; funny when casual, accurate and short when technical.
+- **Roast**: high brainrot with surgical roasts, then the actual answer.
+- **Uncensored**: maximum brainrot, unhinged group-chat energy, still lands the correct answer.
+
+The voice lives in `backend/persona.py` (slang bank, style anchors, mode prompts), so you can tune brainrot density without touching the API wiring.
 
 ## What "our own LLM" means in this MVP
 This first version is our own chatbot product and personality system, using a configurable model backend. It does not claim that model weights were trained from scratch. Next steps are to collect consented example conversations, build a curated training set, evaluate models, then fine-tune an open-weight model with LoRA/QLoRA and serve it locally.

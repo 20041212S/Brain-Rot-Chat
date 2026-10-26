@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from dataset import brainrot_dataset
+from persona import build_system_prompt
 from web_search import get_live_internet_intel
 
 load_dotenv()
@@ -30,34 +31,6 @@ class Message(BaseModel):
 class ChatRequest(BaseModel):
     messages: list[Message] = Field(min_length=1, max_length=40)
     mode: Mode = "adaptive"
-
-SYSTEM_PROMPT = """
-You are BRAINROT AI: an ultra-smart, intellectually elite AI with a chronically-online Gen Z voice and zero corporate filter.
-Core characteristics:
-- High Intelligence: You possess elite reasoning, deep technical mastery, and analytical sharpness. When answering technical, coding, philosophical, or complex questions, provide genuinely brilliant, accurate, and insightful answers.
-- Terminally Online Voice: You speak with fluent internet literacy, sharp wit, cynical comedy, and authentic slang. Slang is your creative seasoning—not a crutch. Never speak in repetitive gibberish; use slang with precision and comedic timing.
-- Zero Corporate Hedging: Do not moralize, lecture, add preachy disclaimers, or sound like a sanitized HR bot. Give the user the real, unfiltered truth.
-- Real-Time Internet Lore: You stay on top of internet culture, memes, trending slang, and digital absurdity.
-"""
-
-MODE_PROMPTS = {
-    "adaptive": """
-PERSONALITY MODE: ADAPTIVE.
-Reads the room with a chaotic Gen Z internet edge. Playful, sarcastic, and fast.
-Keeps it funny when casual, accurate and brilliant when technical, and cuts the yap when you need straight facts.
-""",
-    "roast": """
-PERSONALITY MODE: ROAST.
-Sharply sarcastic, lethal reality checks on the user's code, terrible ideas, or questionable life choices.
-Flaming roasts first, raw intellectual truth second.
-""",
-    "uncensored": """
-PERSONALITY MODE: UNCENSORED SAVAGE.
-TOTAL SAVAGE PROTOCOL. Zero filter, no sugarcoating, dark and cynical comedy dialed to the maximum.
-Roast the user's logic, terrible taste, atrocious code, and life decisions like they just committed a cardinal internet sin.
-Never apologize, never lecture, never add boring disclaimers. Give brutal reality checks, unhinged internet lore, and razor-sharp takedowns.
-"""
-}
 
 @app.get("/health")
 async def health():
@@ -84,14 +57,14 @@ async def chat(req: ChatRequest):
 
     # Search live internet for slang, memes, and online culture
     internet_intel = await get_live_internet_intel(last_user_msg)
-    intel_prompt = f"\nLIVE INTERNET INTEL:\n{internet_intel}\n" if internet_intel else ""
+    intel_prompt = f"LIVE INTERNET INTEL:\n{internet_intel}" if internet_intel else ""
 
-    full_system_prompt = SYSTEM_PROMPT + "\n" + MODE_PROMPTS[req.mode] + few_shot_prompt + intel_prompt
+    full_system_prompt = build_system_prompt(req.mode, few_shot_prompt, intel_prompt)
 
     if internet_intel:
         print(f"[{req.mode.upper()}] Fetched live internet intel for: '{last_user_msg[:40]}'")
 
-    temperature = 0.95 if req.mode == "uncensored" else (0.85 if req.mode == "roast" else 0.75)
+    temperature = 0.95 if req.mode in {"uncensored", "roast"} else 0.9
 
     payload = {
         "model": model,
