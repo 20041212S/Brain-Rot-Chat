@@ -1,7 +1,6 @@
 import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
-import { Bot, CircleStop, Flame, Menu, Plus, Send, Settings2, ShieldAlert, Skull, Sparkles, Zap } from "lucide-react";
+import { CircleStop, Menu, Plus, Send, Settings2, Skull, Zap } from "lucide-react";
 
-type Mode = "adaptive" | "roast" | "uncensored";
 type ChatMessage = { role: "user" | "assistant"; content: string };
 // In production the frontend and backend share one Vercel domain, so relative
 // /api calls are proxied by vercel.json. Local dev defaults to the local backend.
@@ -18,7 +17,6 @@ const starters = [
 
 export default function App() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [mode, setMode] = useState<Mode>("uncensored");
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -54,7 +52,7 @@ export default function App() {
       const response = await fetch(`${API_URL}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: next, mode }),
+        body: JSON.stringify({ messages: next }),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.detail || "The model encountered an error.");
@@ -89,17 +87,15 @@ export default function App() {
   }
 
   return (
-    <div className={`app-shell theme-${mode}`}>
+    <div className="app-shell theme-uncensored">
       <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
         <div className="brand-row">
           <div className="brand-mark">
-            {mode === "uncensored" ? <Skull size={22} /> : <Bot size={22} />}
+            <Skull size={22} />
           </div>
           <div>
             <div className="brand-name">brainrot<span>.</span></div>
-            <div className="brand-sub">
-              {mode === "uncensored" ? "UNCENSORED · ZERO FILTER" : "INTELLIGENCE, BUT COOKED"}
-            </div>
+            <div className="brand-sub">UNCENSORED · ZERO FILTER</div>
           </div>
           <button
             className="icon-button mobile-menu"
@@ -114,26 +110,11 @@ export default function App() {
           <Plus size={17} /> New chat <span>⌘ K</span>
         </button>
 
-        <div className="side-label">SELECT PERSONALITY</div>
+        <div className="side-label">MODE</div>
         <div className="side-modes">
-          <button
-            className={`side-link ${mode === "adaptive" ? "active" : ""}`}
-            onClick={() => setMode("adaptive")}
-          >
-            <Sparkles size={16} /> Adaptive <span className="mode-badge">Chill</span>
-          </button>
-          <button
-            className={`side-link ${mode === "roast" ? "active roast" : ""}`}
-            onClick={() => setMode("roast")}
-          >
-            <Flame size={16} /> Roast Mode <span className="mode-badge roast">Spicy</span>
-          </button>
-          <button
-            className={`side-link ${mode === "uncensored" ? "active uncensored" : ""}`}
-            onClick={() => setMode("uncensored")}
-          >
+          <div className="side-link active uncensored">
             <Skull size={16} /> Uncensored <span className="mode-badge uncensored">Savage</span>
-          </button>
+          </div>
         </div>
 
         <div className="sidebar-bottom">
@@ -141,20 +122,12 @@ export default function App() {
             <span className="status-light" />
             <div>
               <strong>Mode Active</strong>
-              <small>
-                {mode === "uncensored"
-                  ? "Savage & Dark Comedy"
-                  : mode === "roast"
-                  ? "Flaming Roasts"
-                  : "Chaotic Gen Z"}
-              </small>
+              <small>Savage &amp; Dark Comedy</small>
             </div>
             <Zap size={15} />
           </div>
           <div className="profile">
-            <div className="avatar">
-              {mode === "uncensored" ? "💀" : "B"}
-            </div>
+            <div className="avatar">💀</div>
             <div>
               <strong>BRAINROT AI</strong>
               <small>v0.2 · dark uncensored</small>
@@ -173,35 +146,15 @@ export default function App() {
             >
               <Menu size={18} />
             </button>
-            Workspace <span>/</span> <strong>{mode.toUpperCase()} MODE</strong>
+            Workspace <span>/</span> <strong>UNCENSORED MODE</strong>
           </div>
 
           <div className="top-actions">
             <div className="mode-segmented-control">
-              <button
-                className={`seg-btn ${mode === "adaptive" ? "active" : ""}`}
-                onClick={() => setMode("adaptive")}
-                title="Adaptive: witty and balanced"
-              >
-                <Sparkles size={13} />
-                <span>Adaptive</span>
-              </button>
-              <button
-                className={`seg-btn ${mode === "roast" ? "active roast" : ""}`}
-                onClick={() => setMode("roast")}
-                title="Roast: sarcastic reality checks"
-              >
-                <Flame size={13} />
-                <span>Roast</span>
-              </button>
-              <button
-                className={`seg-btn ${mode === "uncensored" ? "active uncensored" : ""}`}
-                onClick={() => setMode("uncensored")}
-                title="Uncensored: brutal dark humor, zero filter"
-              >
+              <span className="seg-btn active uncensored" title="Uncensored is the only mode">
                 <Skull size={13} />
                 <span>Uncensored</span>
-              </button>
+              </span>
             </div>
           </div>
         </header>
@@ -210,28 +163,18 @@ export default function App() {
           {messages.length === 0 ? (
             <div className="welcome">
               <div className="hero-icon">
-                {mode === "uncensored" ? <Skull size={34} /> : <Bot size={34} />}
-                <span className="hero-spark">
-                  {mode === "uncensored" ? "💀" : "✳"}
-                </span>
+                <Skull size={34} />
+                <span className="hero-spark">💀</span>
               </div>
               <div className="eyebrow">
                 <span />
-                {mode === "uncensored"
-                  ? "TERMINALLY UNHINGED & UNCENSORED"
-                  : "YOUR NEW INTERNET COMPANION"}
+                TERMINALLY UNHINGED &amp; UNCENSORED
               </div>
               <h1>
-                {mode === "uncensored" ? (
-                  <>Brain cooked.<br /><span>Zero filter attached.</span></>
-                ) : (
-                  <>Big brain.<br /><span>Absolutely cooked.</span></>
-                )}
+                Brain cooked.<br /><span>Zero filter attached.</span>
               </h1>
               <p className="hero-copy">
-                {mode === "uncensored"
-                  ? "Brutal reality checks, dark humor, and chronically-online slang. No corporate HR talk."
-                  : "Real answers with terminally online delivery. What are we cooking today?"}
+                Brutal reality checks, dark humor, and chronically-online slang. No corporate HR talk.
               </p>
               <div className="starter-grid">
                 {starters.map((s) => (
@@ -261,13 +204,7 @@ export default function App() {
                 ))}
               </div>
               <div className="mode-note">
-                {mode === "uncensored" ? (
-                  <><Skull size={14} /> Uncensored mode active · Brutal comedy, dark truth, zero sugarcoating</>
-                ) : mode === "roast" ? (
-                  <><Flame size={14} /> Roast mode active · Your logic is on trial</>
-                ) : (
-                  <><Sparkles size={14} /> Adaptive mode · Reads the room, sharp when needed</>
-                )}
+                <Skull size={14} /> Uncensored mode active · Brutal comedy, dark truth, zero sugarcoating
               </div>
             </div>
           ) : (
@@ -275,20 +212,11 @@ export default function App() {
               {messages.map((m, i) => (
                 <article className={`message ${m.role}`} key={i}>
                   <div className={`message-avatar ${m.role}`}>
-                    {m.role === "user" ? (
-                      "YOU"
-                    ) : mode === "uncensored" ? (
-                      <Skull size={17} />
-                    ) : (
-                      <Bot size={17} />
-                    )}
+                    {m.role === "user" ? "YOU" : <Skull size={17} />}
                   </div>
                   <div className="message-body">
                     <div className="message-label">
                       {m.role === "user" ? "YOU" : "BRAINROT AI"}
-                      {m.role === "assistant" && (
-                        <span className={`tag-${mode}`}> · {mode.toUpperCase()}</span>
-                      )}
                     </div>
                     <div className="message-content">{m.content}</div>
                   </div>
@@ -297,15 +225,13 @@ export default function App() {
               {busy && (
                 <article className="message assistant">
                   <div className="message-avatar assistant">
-                    {mode === "uncensored" ? <Skull size={17} /> : <Bot size={17} />}
+                    <Skull size={17} />
                   </div>
                   <div className="message-body">
                     <div className="message-label">BRAINROT AI</div>
                     <div className="thinking">
                       <i /><i /><i />
-                      {mode === "uncensored"
-                        ? "formulating a lethal reality check..."
-                        : "cooking up a response..."}
+                      formulating a lethal reality check...
                     </div>
                   </div>
                 </article>
@@ -328,24 +254,14 @@ export default function App() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={keyDown}
-              placeholder={
-                mode === "uncensored"
-                  ? "Say something unhinged. Ask for brutal feedback. No filter..."
-                  : "Ask anything. Cook something. Be so for real..."
-              }
+              placeholder="Say something unhinged. Ask for brutal feedback. No filter..."
               rows={1}
               disabled={busy}
             />
             <div className="composer-footer">
               <div className="composer-tools">
                 <span className="tool-chip">
-                  {mode === "uncensored" ? (
-                    <><Skull size={13} /> Uncensored Protocol</>
-                  ) : mode === "roast" ? (
-                    <><Flame size={13} /> Roast Protocol</>
-                  ) : (
-                    <><Sparkles size={13} /> Adaptive Personality</>
-                  )}
+                  <Skull size={13} /> Uncensored Protocol
                 </span>
                 <span className="hint">Shift + Enter for new line · ⌘ K to clear</span>
               </div>
@@ -361,9 +277,7 @@ export default function App() {
             </div>
           </form>
           <div className="disclaimer">
-            {mode === "uncensored"
-              ? "Dark humor & savage roasts enabled. Truth over feelings."
-              : "BRAINROT AI can be confidently wrong. Verify important facts."}
+            Dark humor &amp; savage roasts enabled. Truth over feelings.
           </div>
         </div>
       </main>

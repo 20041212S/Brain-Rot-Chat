@@ -1,6 +1,6 @@
 # BRAINROT AI
 
-A Gen Z brainrot chatbot with adaptive personality and roast mode. The app owns its personality layer and supports any OpenAI-compatible chat API, including hosted providers and local inference servers.
+A Gen Z brainrot chatbot with an uncensored personality. The app owns its personality layer and supports any OpenAI-compatible chat API, including hosted providers and local inference servers.
 
 ## Requirements
 - Python 3.10+
@@ -93,12 +93,9 @@ The frontend defaults to `http://127.0.0.1:8000` in dev. To point it somewhere e
 - `maxDuration` is set to 60 seconds in `vercel.json`.
 - If you prefer two separate Vercel projects, set the backend Root Directory to `backend` and set `VITE_API_URL` in the frontend project to the backend URL.
 
-## Personality modes
-- **Adaptive**: medium-high brainrot; funny when casual, accurate and short when technical.
-- **Roast**: high brainrot with surgical roasts, then the actual answer.
-- **Uncensored**: maximum brainrot, unhinged group-chat energy, still lands the correct answer.
+## Personality
 
-The voice lives in `backend/persona.py` (slang bank, style anchors, mode prompts), so you can tune brainrot density without touching the API wiring.
+The chatbot has a single **Uncensored** personality: maximum brainrot, unhinged group-chat energy, and a correct answer underneath the chaos. The voice lives in `backend/persona.py` (slang bank, style anchors, prompt), so you can tune brainrot density without touching the API wiring.
 
 ## What "our own LLM" means in this MVP
 This first version is our own chatbot product and personality system, using a configurable model backend. It does not claim that model weights were trained from scratch. Next steps are to collect consented example conversations, build a curated training set, evaluate models, then fine-tune an open-weight model with LoRA/QLoRA and serve it locally.

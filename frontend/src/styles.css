@@ -17,13 +17,6 @@
 }
 
 /* Theme variations */
-.app-shell.theme-roast {
-  --accent: #ff6a3d;
-  --accent-glow: rgba(255, 106, 61, 0.22);
-  --accent-btn: #ff6a3d;
-  --accent-btn-text: #1a0802;
-}
-
 .app-shell.theme-uncensored {
   --accent: #ff2255;
   --accent-glow: rgba(255, 34, 85, 0.28);
@@ -188,12 +181,6 @@ button {
   color: #f1ebff;
 }
 
-.side-link.active.roast {
-  background: #24110b;
-  border-color: #552718;
-  color: #ffd8cc;
-}
-
 .side-link.active.uncensored {
   background: #270811;
   border-color: #5d1727;
@@ -209,11 +196,6 @@ button {
   border-radius: 12px;
   background: #251d38;
   color: #bfa5ff;
-}
-
-.mode-badge.roast {
-  background: #3e1b10;
-  color: #ff9b79;
 }
 
 .mode-badge.uncensored {
@@ -368,11 +350,6 @@ button {
 .seg-btn.active {
   background: #251d38;
   color: #e5d7ff;
-}
-
-.seg-btn.active.roast {
-  background: #3a170d;
-  color: #ffc4b3;
 }
 
 .seg-btn.active.uncensored {
@@ -610,11 +587,6 @@ button {
 
 .tag-uncensored {
   color: #ff3366 !important;
-  font-weight: 600;
-}
-
-.tag-roast {
-  color: #ff7744 !important;
   font-weight: 600;
 }
 

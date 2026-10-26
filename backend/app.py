@@ -22,15 +22,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-Mode = Literal["adaptive", "roast", "uncensored"]
-
 class Message(BaseModel):
     role: Literal["user", "assistant"]
     content: str = Field(min_length=1, max_length=12000)
 
 class ChatRequest(BaseModel):
     messages: list[Message] = Field(min_length=1, max_length=40)
-    mode: Mode = "adaptive"
 
 @app.get("/health")
 async def health():
@@ -59,12 +56,12 @@ async def chat(req: ChatRequest):
     internet_intel = await get_live_internet_intel(last_user_msg)
     intel_prompt = f"LIVE INTERNET INTEL:\n{internet_intel}" if internet_intel else ""
 
-    full_system_prompt = build_system_prompt(req.mode, few_shot_prompt, intel_prompt)
+    full_system_prompt = build_system_prompt(few_shot_prompt, intel_prompt)
 
     if internet_intel:
-        print(f"[{req.mode.upper()}] Fetched live internet intel for: '{last_user_msg[:40]}'")
+        print(f"[UNCENSORED] Fetched live internet intel for: '{last_user_msg[:40]}'")
 
-    temperature = 0.95 if req.mode in {"uncensored", "roast"} else 0.9
+    temperature = 0.95
 
     payload = {
         "model": model,
@@ -93,7 +90,7 @@ async def chat(req: ChatRequest):
         return {
             "reply": answer,
             "model": model,
-            "mode": req.mode,
+            "mode": "uncensored",
         }
     except HTTPException:
         raise
