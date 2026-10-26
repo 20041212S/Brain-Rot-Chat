@@ -46,16 +46,23 @@ npm run dev
 
 Open the URL printed by Vite (usually http://localhost:5173).
 
-## Deploy to Vercel
+## Deploy to Vercel (one project, two services)
 
-Deploy the frontend and backend as **two Vercel projects**. Vercel auto-detects the FastAPI `app` in `backend/app.py`, so no custom handler is needed.
+The root `vercel.json` deploys both apps as **Vercel Services** on one domain:
 
-### Backend project
+- `/` → Vite frontend
+- `/api/*` → FastAPI backend
+- `/health` → FastAPI health check
 
-1. In Vercel, choose **Add New → Project** and import this repo.
-2. Set **Root Directory** to `backend`.
-3. Keep the framework preset as **FastAPI** and leave build settings on default.
-4. Add these Environment Variables (Production and Preview):
+Because both run on the same origin, the frontend calls `/api/chat` directly and CORS is not involved.
+
+### 1. Import the repo
+
+In Vercel, choose **Add New → Project** and import this repo. Keep the **Root Directory** as the repository root so Vercel reads `vercel.json`.
+
+### 2. Add environment variables
+
+Project → **Settings → Environment Variables** (Production and Preview):
 
 | Variable | Value |
 | --- | --- |
@@ -63,28 +70,28 @@ Deploy the frontend and backend as **two Vercel projects**. Vercel auto-detects 
 | `LLM_API_KEY` | your provider key |
 | `LLM_MODEL` | e.g. `openai/gpt-oss-120b` |
 | `LLM_MAX_TOKENS` | `800` |
-| `CORS_ORIGINS` | your frontend URL, e.g. `https://your-app.vercel.app` |
+| `CORS_ORIGINS` | your Vercel URL, e.g. `https://your-app.vercel.app` |
 
 Optional: `LLM_REASONING_EFFORT`.
 
-5. Deploy, then open `https://<backend-project>.vercel.app/health`. It should return `{"ok":true,...}`.
+Do **not** set `VITE_API_URL` for the Vercel deployment. Same-origin `/api` calls are what you want.
 
-`backend/data.txt` is a copy of the slang dataset so it gets bundled into the serverless function. `backend/vercel.json` sets the function timeout to 60 seconds.
+### 3. Deploy and test
 
-### Point the frontend at the backend
+After deploying:
 
-In the **frontend** Vercel project, add:
+- `https://<project>.vercel.app/` → chat UI
+- `https://<project>.vercel.app/health` → `{"ok":true,...}`
 
-| Variable | Value |
-| --- | --- |
-| `VITE_API_URL` | `https://<backend-project>.vercel.app` |
+### Local development
 
-Vite reads `VITE_*` variables at build time, so **redeploy the frontend** after adding it.
+The frontend defaults to `http://127.0.0.1:8000` in dev. To point it somewhere else, set `VITE_API_URL` in `frontend/.env.local`.
 
-### CORS notes
+### Notes
 
-- `CORS_ORIGINS` is comma-separated: `https://your-app.vercel.app,http://localhost:5173`.
-- Preview deployments use a different URL each time. Add the preview origin to `CORS_ORIGINS`, or set `CORS_ORIGINS=*` since the API uses no cookies.
+- `backend/data.txt` is bundled with the backend service.
+- `maxDuration` is set to 60 seconds in `vercel.json`.
+- If you prefer two separate Vercel projects, set the backend Root Directory to `backend` and set `VITE_API_URL` in the frontend project to the backend URL.
 
 ## Personality modes
 - **Adaptive**: medium-high brainrot; funny when casual, accurate and short when technical.

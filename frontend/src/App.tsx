@@ -3,7 +3,11 @@ import { Bot, CircleStop, Flame, Menu, Plus, Send, Settings2, ShieldAlert, Skull
 
 type Mode = "adaptive" | "roast" | "uncensored";
 type ChatMessage = { role: "user" | "assistant"; content: string };
-const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+// In production the frontend and backend share one Vercel domain, so relative
+// /api calls are proxied by vercel.json. Local dev defaults to the local backend.
+const API_URL =
+  import.meta.env.VITE_API_URL ??
+  (import.meta.env.DEV ? "http://127.0.0.1:8000" : "");
 
 const starters = [
   { icon: "💀", title: "Destroy my code", prompt: "Roast this code brutally in full brainrot mode, don't hold back, then show me how to write it properly: " },
