@@ -20,7 +20,7 @@ cp .env.example .env
 Edit `backend/.env`:
 - `LLM_BASE_URL`: OpenAI-compatible API base URL
 - `LLM_API_KEY`: your provider key
-- `LLM_MODEL`: model name supported by your provider
+- `LLM_MODEL`: model name supported by your provider. On Groq, `qwen/qwen3.8-27b` follows the uncensored persona; `openai/gpt-oss-120b` is safety-tuned and refuses profanity.
 
 Do not put API keys in the frontend or commit `.env`.
 
@@ -68,7 +68,7 @@ Project → **Settings → Environment Variables** (Production and Preview):
 | --- | --- |
 | `LLM_BASE_URL` | e.g. `https://api.groq.com/openai/v1` |
 | `LLM_API_KEY` | your provider key |
-| `LLM_MODEL` | e.g. `openai/gpt-oss-120b` |
+| `LLM_MODEL` | e.g. `qwen/qwen3.8-27b` |
 | `LLM_MAX_TOKENS` | `800` |
 | `CORS_ORIGINS` | your Vercel URL, e.g. `https://your-app.vercel.app` |
 
